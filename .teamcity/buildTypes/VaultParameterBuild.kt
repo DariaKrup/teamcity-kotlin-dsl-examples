@@ -23,7 +23,7 @@ object BuildTemplate: Template({
 
 class VaultParameterBuild : BuildType {
     constructor() : super() {
-        name = "test"
+        name = "Build Configuration with Vault parameter"
         templates(BuildTemplate)
     }
     constructor(block: VaultParameterBuild.() -> Unit = {}) : this() {
