@@ -5,15 +5,6 @@ import jetbrains.buildServer.configs.kotlin.Template
 import jetbrains.buildServer.configs.kotlin.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.remoteParameters.hashiCorpVaultParameter
 
-class VaultParameterBuild : BuildType {
-    constructor() : super() {
-        name = "test"
-        templates(BuildTemplate)
-    }
-    constructor(block: VaultParameterBuild.() -> Unit = {}) : this() {
-        block()
-    }
-}
 
 object BuildTemplate: Template({
     name = "build.template"
@@ -29,3 +20,14 @@ object BuildTemplate: Template({
         }
     }
 })
+
+class VaultParameterBuild : BuildType {
+    constructor() : super() {
+        name = "test"
+        templates(BuildTemplate)
+    }
+    constructor(block: VaultParameterBuild.() -> Unit = {}) : this() {
+        block()
+    }
+}
+
