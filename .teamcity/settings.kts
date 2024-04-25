@@ -29,9 +29,9 @@ version = "2024.03"
 project {
     description = "Project with TeamCity Kotlin DSL examples"
 
-    VaultParameterBuild {
+    buildType( VaultParameterBuild {
         params {
             hashiCorpVaultParameter { name = "vault_parameter"; query="/path/to/some/secret!overridden_value" }
         }
-    }
+    })
 }
