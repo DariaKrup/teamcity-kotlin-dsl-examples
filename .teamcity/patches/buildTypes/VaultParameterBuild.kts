@@ -11,16 +11,10 @@ accordingly, and delete the patch script.
 */
 changeBuildType(RelativeId("VaultParameterBuild")) {
     params {
-        expect {
+        remove {
             hashiCorpVaultParameter {
                 name = "vault_parameter"
                 query = "/path/to/some/secret!overridden_value"
-            }
-        }
-        update {
-            hashiCorpVaultParameter {
-                name = "vault_parameter"
-                query = "/path/to/some/secret!value_new"
             }
         }
     }
