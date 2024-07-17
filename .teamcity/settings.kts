@@ -37,6 +37,10 @@ project {
 object VaultParameterBuild : BuildType({
     templates(BuildTemplate)
     name = "Build Configuration with Vault parameter"
+
+    params {
+       hashiCorpVaultParameter { name = "vault_parameter"; query="/path/to/some/secret!overridden_value" }
+    }
 })
 
 object BuildTemplate : Template({
