@@ -23,5 +23,8 @@ changeBuildType(RelativeId("VaultParameterBuild")) {
                 query = "/path/to/some/secret!value"
             }
         }
+        add {
+            param("checkbox_project", "false")
+        }
     }
 }
