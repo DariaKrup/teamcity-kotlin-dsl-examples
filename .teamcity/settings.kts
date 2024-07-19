@@ -39,7 +39,15 @@ object VaultParameterBuild : BuildType({
     name = "Build Configuration with Vault parameter"
 
     params {
-       hashiCorpVaultParameter { name = "vault_parameter"; query="/path/to/some/secret!overridden_value" }
+        hashiCorpVaultParameter { name = "vault_parameter"; query="/path/to/some/secret!overridden_value" }
+        text("text_parameter", "text_value",
+              regex = "a*", validationMessage = "NOT")
+        checkbox("checkbox", "true",
+                  checked = "true", unchecked = "false")
+        password("password", "******", label = "password")
+        select("select", "a1", description = "select",
+                allowMultiple = true, valueSeparator = ";",
+                options = listOf("a1" to "1", "a2" to "2"))
     }
 })
 
