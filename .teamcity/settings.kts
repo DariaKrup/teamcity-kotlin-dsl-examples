@@ -30,6 +30,16 @@ project {
     description = "Project with TeamCity Kotlin DSL examples"
 
     buildType(VaultParameterBuild)
+    params {
+        text("text_parameter_project", "text_value",
+              regex = "a*", validationMessage = "NOT")
+        checkbox("checkbox_project", "true",
+                  checked = "true", unchecked = "false")
+        password("password_project", "******", label = "password")
+        select("select_project", "a1", description = "select",
+                allowMultiple = true, valueSeparator = ";",
+                options = listOf("a1" to "1", "a2" to "2"))
+    }
 
     template(BuildTemplate)
 }
@@ -40,14 +50,6 @@ object VaultParameterBuild : BuildType({
 
     params {
         hashiCorpVaultParameter { name = "vault_parameter"; query="/path/to/some/secret!overridden_value" }
-        text("text_parameter", "text_value",
-              regex = "a*", validationMessage = "NOT")
-        checkbox("checkbox", "true",
-                  checked = "true", unchecked = "false")
-        password("password", "******", label = "password")
-        select("select", "a1", description = "select",
-                allowMultiple = true, valueSeparator = ";",
-                options = listOf("a1" to "1", "a2" to "2"))
     }
 })
 
@@ -59,6 +61,14 @@ object BuildTemplate : Template({
             name = "vault_parameter"
             query = "/path/to/some/secret!value"
         }
+        text("text_parameter_template", "text_value",
+              regex = "a*", validationMessage = "NOT")
+        checkbox("checkbox_template", "true",
+                  checked = "true", unchecked = "false")
+        password("password_template", "******", label = "password")
+        select("select_template", "a1", description = "select",
+                allowMultiple = true, valueSeparator = ";",
+                options = listOf("a1" to "1", "a2" to "2"))
     }
 
     steps {
