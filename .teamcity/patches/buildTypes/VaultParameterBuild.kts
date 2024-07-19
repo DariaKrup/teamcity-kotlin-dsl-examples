@@ -24,7 +24,7 @@ changeBuildType(RelativeId("VaultParameterBuild")) {
             }
         }
         add {
-            param("checkbox_project", "false")
+            param("checkbox_project", "true")
         }
     }
 }
