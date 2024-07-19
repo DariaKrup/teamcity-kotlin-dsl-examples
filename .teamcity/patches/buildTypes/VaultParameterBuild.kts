@@ -24,10 +24,13 @@ changeBuildType(RelativeId("VaultParameterBuild")) {
             }
         }
         add {
+            password("password_template", "credentialsJSON:ba74f942-6b7a-4395-b6fa-bcb7ed8bee46", label = "password")
+        }
+        add {
             param("checkbox_project", "true")
         }
         add {
-            password("password_template", "credentialsJSON:ba74f942-6b7a-4395-b6fa-bcb7ed8bee46", label = "password")
+            param("select_project", "a2")
         }
     }
 }
