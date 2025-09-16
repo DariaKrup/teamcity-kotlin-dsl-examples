@@ -1,6 +1,6 @@
 import jetbrains.buildServer.configs.kotlin.*
+import jetbrains.buildServer.configs.kotlin.buildSteps.powerShell
 import jetbrains.buildServer.configs.kotlin.buildSteps.script
-import jetbrains.buildServer.configs.kotlin.remoteParameters.hashiCorpVaultParameter
 
 /*
 The settings script is an entry point for defining a TeamCity
@@ -24,58 +24,106 @@ To debug in IntelliJ Idea, open the 'Maven Projects' tool window (View
 'Debug' option is available in the context menu for the task.
 */
 
-version = "2023.11"
+version = "2024.12"
 
 project {
-    description = "Project with TeamCity Kotlin DSL examples"
 
-    buildType(VaultParameterBuild)
-    params {
-        text("text_parameter_project", "text_value",
-              regex = "a*", validationMessage = "NOT")
-        checkbox("checkbox_project", "true",
-                  checked = "true", unchecked = "false")
-        password("password_project", "******", label = "password")
-        select("select_project", "a1", description = "select",
-                allowMultiple = true, valueSeparator = ";",
-                options = listOf("a1" to "1", "a2" to "2"))
-    }
-
-    template(BuildTemplate)
+    buildType(JobCNoncritical)
+    buildType(JobBFail)
+    buildType(Job2aPass)
+    buildType(ParentComposite)
+    buildType(SecondComposite)
+    buildType(JobAPass)
 }
 
-object VaultParameterBuild : BuildType({
-    templates(BuildTemplate)
-    name = "Build Configuration with Vault parameter"
-
-    params {
-        hashiCorpVaultParameter { name = "vault_parameter"; query="/path/to/some/secret!overridden_value" }
-    }
-})
-
-object BuildTemplate : Template({
-    name = "build.template"
-
-    params {
-        hashiCorpVaultParameter {
-            name = "vault_parameter"
-            query = "/path/to/some/secret!value"
-        }
-        text("text_parameter_template", "text_value",
-              regex = "a*", validationMessage = "NOT")
-        checkbox("checkbox_template", "true",
-                  checked = "true", unchecked = "false")
-        password("password_template", "******", label = "password")
-        select("select_template", "a1", description = "select",
-                allowMultiple = true, valueSeparator = ";",
-                options = listOf("a1" to "1", "a2" to "2"))
-    }
+object Job2aPass : BuildType({
+    name = "job2a-pass"
 
     steps {
         script {
-            name = "Parameter output"
-            id = "ParameterOutput"
-            scriptContent = "echo %vault_parameter%"
+            name = "PassImmediately"
+            id = "PassImmediately"
+            scriptContent = "exit 0"
+        }
+    }
+})
+
+object JobAPass : BuildType({
+    name = "job-a-pass"
+
+    steps {
+        powerShell {
+            name = "Pass after 5 mins"
+            id = "Pass_after_5_mins"
+            scriptMode = script {
+                content = """
+                    sleep 300
+                    exit 0
+                """.trimIndent()
+            }
+        }
+    }
+})
+
+object JobBFail : BuildType({
+    name = "job-b-fail"
+
+    steps {
+        script {
+            name = "FailImmediately"
+            id = "FailImmediately"
+            scriptContent = "exit 1"
+        }
+    }
+})
+
+object JobCNoncritical : BuildType({
+    name = "job c noncritical"
+
+    steps {
+        script {
+            name = "FailImmediately"
+            id = "FailImmediately"
+            scriptContent = "exit 1"
+        }
+    }
+})
+
+object ParentComposite : BuildType({
+    name = "parent composite"
+
+    type = BuildTypeSettings.Type.COMPOSITE
+
+    vcs {
+        showDependenciesChanges = true
+    }
+
+    dependencies {
+        snapshot(JobAPass) {
+            reuseBuilds = ReuseBuilds.NO
+            onDependencyFailure = FailureAction.FAIL_TO_START
+        }
+        snapshot(JobBFail) {
+            onDependencyFailure = FailureAction.FAIL_TO_START
+        }
+    }
+})
+
+object SecondComposite : BuildType({
+    name = "second composite"
+
+    type = BuildTypeSettings.Type.COMPOSITE
+
+    vcs {
+        showDependenciesChanges = true
+    }
+
+    dependencies {
+        snapshot(Job2aPass) {
+            onDependencyCancel = FailureAction.ADD_PROBLEM
+        }
+        snapshot(ParentComposite) {
+            onDependencyCancel = FailureAction.ADD_PROBLEM
         }
     }
 })
